@@ -66,7 +66,7 @@ def main() -> None:
             outputs.append(output)
             pred_answers.append(pred_ans)
         true_ans = extract_true_answer(test_data[i]['answer'])
-        data.append({'input': model_input, 'output': outputs, 'extracted_ans': pred_answers, 'true_ans:': true_ans})
+        data.append({'input': model_input, 'output': outputs, 'extracted_ans': pred_answers, 'true_ans': true_ans})
     write_jsonl('data.jsonl', data)
 
 if __name__ == '__main__':
