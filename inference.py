@@ -1,3 +1,8 @@
+from huggingface_hub import HfFolder
+from huggingface_hub import InferenceApi
+from utils import read_jsonl, read_my_jsonl, write_jsonl, extract_pred_answer, extract_true_answer
+
+
 def infer(inference, prompt,
           max_length = 32,
           top_k = 0,
@@ -34,3 +39,35 @@ def infer(inference, prompt,
         return inference(prompt, params=params)[0]['generated_text']
     except NotImplementedError:
         return ''
+    
+
+def main() -> None:    
+    test_data = read_jsonl('test.jsonl')
+    prompt = read_my_jsonl('prompt.json')
+    inference = InferenceApi("bigscience/bloom", token=HfFolder.get_token())
+    data = []
+    for i in range(len(test_data)):
+        question = test_data[i]['question']
+        model_input = prompt  + 'Q: ' + question + '\n' + 'A:'
+        outputs = []
+        pred_answers = []
+        for j in range(4):
+            if j == 0:
+                output = infer(inference, model_input, max_length=150, top_k=None, greedy_decoding=True, top_p=None)
+            elif j == 1:
+                output = infer(inference, model_input, max_length=150, top_k=20, greedy_decoding=False, top_p=None)
+            elif j == 2:
+                output = infer(inference, model_input, max_length=150, top_k=None, greedy_decoding=False,  top_p=None, num_beams=20)
+            else:
+                output = infer(inference, model_input, max_length=150, top_k=None, greedy_decoding=False,  top_p=0.9)
+            output = output.split('Q:')[0]
+            output = output.split('A:')[0].strip()
+            pred_ans = extract_pred_answer(output)
+            outputs.append(output)
+            pred_answers.append(pred_ans)
+        true_ans = extract_true_answer(test_data[i]['answer'])
+        data.append({'input': model_input, 'output': outputs, 'extracted_ans': pred_answers, 'true_ans:': true_ans})
+    write_jsonl('data.jsonl', data)
+
+if __name__ == '__main__':
+    main()
