@@ -57,9 +57,9 @@ def main() -> None:
             elif j == 1:
                 output = infer(inference, model_input, max_length=150, top_k=20, greedy_decoding=False, top_p=None)
             elif j == 2:
-                output = infer(inference, model_input, max_length=150, top_k=None, greedy_decoding=False,  top_p=None, num_beams=20)
-            else:
                 output = infer(inference, model_input, max_length=150, top_k=None, greedy_decoding=False,  top_p=0.9)
+            else:
+                output = infer(inference, model_input, max_length=150, top_k=None, greedy_decoding=False,  top_p=None, num_beams=20)
             output = output.split('Q:')[0]
             output = output.split('A:')[0].strip()
             pred_ans = extract_pred_answer(output)
