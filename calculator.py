@@ -3,7 +3,7 @@ from collections import Counter
 from utils import read_my_jsonl
 
 def main() -> None:
-    data = read_my_jsonl('data.jsonl')
+    data = read_my_jsonl('data/data.jsonl')
 
     answers_true = []
     answers_greedy = []

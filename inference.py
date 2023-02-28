@@ -42,8 +42,8 @@ def infer(inference, prompt,
     
 
 def main() -> None:    
-    test_data = read_jsonl('test.jsonl')
-    prompt = read_my_jsonl('prompt.json')
+    test_data = read_jsonl('data/test.jsonl')
+    prompt = read_my_jsonl('data/prompt.json')
     inference = InferenceApi("bigscience/bloom", token=HfFolder.get_token())
     data = []
     for i in range(len(test_data)):
@@ -67,7 +67,7 @@ def main() -> None:
             pred_answers.append(pred_ans)
         true_ans = extract_true_answer(test_data[i]['answer'])
         data.append({'input': model_input, 'output': outputs, 'extracted_ans': pred_answers, 'true_ans': true_ans})
-    write_jsonl('data.jsonl', data)
+    write_jsonl('data/data.jsonl', data)
 
 if __name__ == '__main__':
     main()
